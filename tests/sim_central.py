@@ -70,8 +70,9 @@ async def handle(reader, writer, c: Central, mode="ok"):
         if f.ftype == P.T_GETCONFIG:
             cfg = {"deviceID": DEVICE_ID, "phone": "+48000000000", "zones": ["Dom", "Garaż"],
                    "inputs": ["PIR salon", "Kontaktron drzwi", "", "", "", "", "", ""],
-                   "outputs": ["Syrena", "Brama", "Światło", "LED"], "temps": ["Kotłownia"], "analog": "Akumulator"}
-            send(P.T_CONFIG, json.dumps(cfg, ensure_ascii=False).encode(), vec)
+                   "outputs": ["Syrena", "Brama", "Światło", "LED"], "temps": ["Kotłownia"], "analog": "Akumulator", "inp_s1": 3, "inp_s2": 0}
+            raw = json.dumps(cfg, ensure_ascii=False).replace("PIR salon", "PIR\nsalon")
+            send(P.T_CONFIG, raw.encode(), vec)
         elif f.ftype == P.T_ARM:
             mask, night = f.data[0], f.data[1]
             for z in range(2):

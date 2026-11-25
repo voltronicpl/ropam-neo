@@ -74,6 +74,9 @@ async def test_setup_with_simulator(hass, no_frontend, socket_enabled):
     zone = next(s for e, s in states.items() if e.startswith("alarm_control_panel."))
     assert zone.state == "disarmed"
     assert any(e.startswith("binary_sensor.") and "pir_salon" in e for e in states)
+    # tylko wejścia 1-2 (strefa 1 / nazwane), nie 8 z płyty
+    nums = sorted({states[e].attributes["numer"] for e in states if e.startswith("binary_sensor.") and "pamiec_alarmu" in states[e].attributes})
+    assert nums == [1, 2], nums
     switches = [e for e in states if e.startswith("switch.")]
     assert switches, states.keys()
 

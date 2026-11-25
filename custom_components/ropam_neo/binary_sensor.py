@@ -21,6 +21,7 @@ from .protocol import (
     OUTPUT_CONTROLLABLE,
     OUTPUT_ON,
     OUTPUT_STATES,
+    zone_input_mask,
 )
 
 _CLASS_HINTS: list[tuple[tuple[str, ...], BinarySensorDeviceClass]] = [
@@ -48,12 +49,18 @@ def input_indexes(client: RopamNeoClient) -> list[int]:
     if st is None:
         return []
     names = config_names(client, "inputs")
+    zmask = zone_input_mask(client.state.config)
     out = []
     for i, ch in enumerate(st.inputs):
         if ch not in INPUT_STATES:
             continue
         has_name = i < len(names) and bool(names[i])
-        if ch == "X" and not has_name:
+        in_zone = zmask is not None and bool(zmask >> i & 1)
+        if zmask is not None or names:
+            # są dane z centrali: tylko wejścia w strefach albo nazwane
+            if not (in_zone or has_name):
+                continue
+        elif ch == "X":
             continue
         out.append(i)
     return out

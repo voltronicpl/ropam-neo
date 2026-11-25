@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import os
 import struct
 import time
@@ -33,6 +34,7 @@ from .protocol import (
     T_PANIC,
     T_PING,
     T_SETOUTS,
+    T_SHUTTERS_CONFIG,
     T_SILENT_CLOSE,
     T_STATUS,
     BadFrameError,
@@ -122,6 +124,7 @@ class NeoState:
     config: dict[str, Any] | None = None
     config_raw: str | None = None
     ext_status_raw: str | None = None
+    config_error: str | None = None
     login: LoginInfo | None = None
     last_frame: float | None = None
     last_error: str | None = None
@@ -521,9 +524,11 @@ class RopamNeoClient:
                     "CONFIG "
                     + json.dumps(_mask_config(self.state.config), ensure_ascii=False),
                 )
+                self.state.config_error = None
             except ProtocolError as err:
                 self._add_log("RX", f"CONFIG (surowy, {len(text)} znaków)")
                 self._err(str(err))
+                self.state.config_error = str(err)
                 self.state.config = {}
             if self.state.status is not None:
                 self._ready.set()
@@ -549,6 +554,9 @@ class RopamNeoClient:
                         _LOGGER.exception("Błąd listenera komunikatu")
                 self._notify()
             return
+        if ftype == T_SHUTTERS_CONFIG:
+            self._add_log("RX", f"SHUTTERSCONFIG {frame.text()}")
+            return
         if ftype == T_EVENTS:
             self._add_log("RX", f"EVENTS {frame.text()}")
             return
@@ -568,6 +576,16 @@ class RopamNeoClient:
 
     # ------------------------------------------------------------ diagnostics
 
+    def _mask_raw(self, text: str | None) -> str | None:
+        if not text:
+            return text
+        if self.device_id:
+            text = text.replace(self.device_id, _mask(self.device_id))
+        if self.tcp_key:
+            text = text.replace(self.tcp_key, "****")
+        # numery telefonów i inne długie ciągi cyfr
+        return re.sub(r"\+?\d{7,}", lambda m: _mask(m.group(0)), text)
+
     def diagnostics(self) -> dict[str, Any]:
         st = self.state
         return {
@@ -586,6 +604,10 @@ class RopamNeoClient:
             "status": st.status.as_dict() if st.status else None,
             "ext_status_raw": st.ext_status_raw,
             "config": _mask_config(st.config),
+            "config_error": st.config_error,
+            "config_raw": (
+                self._mask_raw(st.config_raw) if st.config_error else None
+            ),
             "log": [e.as_dict() for e in self.log],
         }
 

@@ -211,14 +211,14 @@ class RopamNeoPanel extends HTMLElement {
       this._last.info = infoHtml;
       $("info").innerHTML = infoHtml;
     }
-    this._set("errors", `Błąd: ${e.last_error || "brak"}\nKomunikat: ${e.last_message || "brak"}${data.error ? "\nWS: " + data.error : ""}`);
+    this._set("errors", `Błąd: ${e.last_error || "brak"}\nKomunikat: ${e.last_message || "brak"}${e.config_error ? "\nKonfiguracja: " + e.config_error : ""}${data.error ? "\nWS: " + data.error : ""}`);
     const idx = Array.from({ length: 32 }, (_, i) => String((i + 1) % 10)).join("");
     this._set("chars", st.inputs || st.outputs
       ? `nr:      ${idx}\nwejścia: ${st.inputs || ""}\nwyjścia: ${st.outputs || ""}\nstrefy:  ${(st.zones || []).map((z, i) => `S${i + 1}=0x${(z.raw || 0).toString(16).padStart(2, "0")}${z.armed ? " uzbr" : ""}${z.night ? " noc" : ""}${z.alarm ? " ALARM" : ""}`).join("  ")}`
       : "—");
     this._set("raw", e.status_raw || "—");
     this._set("parsed", e.status ? JSON.stringify(e.status, null, 2) : "—");
-    this._set("config", e.config ? JSON.stringify(e.config, null, 2) : "—");
+    this._set("config", e.config_raw ? "BŁĄD PARSOWANIA - surowa treść:\n" + e.config_raw : e.config ? JSON.stringify(e.config, null, 2) : "—");
 
     const log = e.log || [];
     $("logCount").textContent = `(${log.length})`;

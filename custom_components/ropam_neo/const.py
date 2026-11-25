@@ -20,4 +20,4 @@ EVENT_MESSAGE = "ropam_neo_message"
 
 PLATFORMS = ["alarm_control_panel", "binary_sensor", "button", "sensor", "switch"]
 
-VERSION = "1.1"
+VERSION = "1.2"

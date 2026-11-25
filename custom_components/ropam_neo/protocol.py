@@ -407,12 +407,31 @@ def parse_status(text: str) -> NeoStatus:
 
 def parse_config(text: str) -> dict[str, Any]:
     try:
-        cfg = json.loads(text)
-    except ValueError as err:
-        raise ProtocolError(f"Niepoprawny JSON konfiguracji: {err}") from err
+        # centrala potrafi wstawić surowe znaki sterujące (np. enter) w nazwy
+        cfg = json.loads(text, strict=False)
+    except ValueError:
+        cleaned = "".join(ch if ch >= " " else " " for ch in text)
+        try:
+            cfg = json.loads(cleaned)
+        except ValueError as err:
+            raise ProtocolError(f"Niepoprawny JSON konfiguracji: {err}") from err
     if not isinstance(cfg, dict):
         raise ProtocolError("Konfiguracja nie jest obiektem JSON")
     return cfg
+
+
+def zone_input_mask(cfg: dict[str, Any] | None) -> int | None:
+    """Wejścia przypisane do stref (inp_s1 | inp_s2), None gdy brak danych."""
+    if not cfg:
+        return None
+    mask = 0
+    found = False
+    for key in ("inp_s1", "inp_s2"):
+        val = cfg.get(key)
+        if isinstance(val, int) and not isinstance(val, bool):
+            mask |= val
+            found = True
+    return mask if found else None
 
 
 def output_mask(count: int, index: int, on: bool) -> bytes:

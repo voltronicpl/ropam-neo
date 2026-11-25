@@ -14,6 +14,23 @@ def test_crc_and_frame_roundtrip():
     assert not bad.crc_ok
 
 
+def test_real_panel_status_fw37():
+    raw = ("#737p261125175400000000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxx--------"
+           "404000000000xxxxxxxx08c34000003800000004000000000V n84fefe00000000")
+    st = P.parse_status(raw)
+    assert st.parse_error is None
+    assert st.firmware == "3.7" and st.supply_voltage == 14.0 and st.ac_ok
+    assert st.zones[0].ready and not st.zones[0].armed
+    assert st.outputs.startswith("x" * 24)
+
+
+def test_config_with_control_chars():
+    cfg = P.parse_config('{"inputs":["A\tB","C\nD"],"inp_s1":5}')
+    assert cfg["inp_s1"] == 5
+    assert P.zone_input_mask(cfg) == 5
+    assert P.zone_input_mask({}) is None
+
+
 def test_status_parse():
     st = P.parse_status(S.Central().status_text())
     assert st.parse_error is None, st.parse_error
@@ -39,6 +56,8 @@ async def test_full_session(socket_enabled):
         cl.start()
         assert await cl.wait_ready(5)
         assert cl.state.config["zones"][1] == "Garaż"
+        assert cl.state.config["inputs"][0] == "PIR\nsalon"
+        assert cl.state.config_error is None
         await cl.arm(0b01, night=True)
         await asyncio.sleep(0.3)
         assert cl.state.status.zones[0].armed and cl.state.status.zones[0].night
