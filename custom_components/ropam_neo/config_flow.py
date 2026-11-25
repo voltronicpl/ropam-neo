@@ -23,6 +23,7 @@ from homeassistant.helpers.selector import (
 from .client import LoginInfo, NeoError, RopamNeoClient
 from .const import (
     CONF_DEVICE_ID,
+    CONF_FIRE_BUTTON,
     CONF_PANIC_BUTTON,
     CONF_TCP_KEY,
     CONF_USER_CODE,
@@ -127,9 +128,11 @@ class RopamNeoOptionsFlow(OptionsFlow):
         errors: dict[str, str] = {}
         defaults = dict(self.config_entry.data)
         panic = self.config_entry.options.get(CONF_PANIC_BUTTON, True)
+        fire = self.config_entry.options.get(CONF_FIRE_BUTTON, True)
         if user_input is not None:
             data = _clean(user_input)
             panic = bool(user_input.get(CONF_PANIC_BUTTON, True))
+            fire = bool(user_input.get(CONF_FIRE_BUTTON, True))
             defaults = data
             changed = any(
                 data[k] != self.config_entry.data.get(k)
@@ -144,9 +147,14 @@ class RopamNeoOptionsFlow(OptionsFlow):
                         data=data,
                         title=f"Ropam Neo ({data[CONF_HOST]})",
                     )
-                return self.async_create_entry(data={CONF_PANIC_BUTTON: panic})
+                return self.async_create_entry(
+                    data={CONF_PANIC_BUTTON: panic, CONF_FIRE_BUTTON: fire}
+                )
             errors["base"] = error
         schema = _schema(defaults).extend(
-            {vol.Required(CONF_PANIC_BUTTON, default=panic): BooleanSelector()}
+            {
+                vol.Required(CONF_PANIC_BUTTON, default=panic): BooleanSelector(),
+                vol.Required(CONF_FIRE_BUTTON, default=fire): BooleanSelector(),
+            }
         )
         return self.async_show_form(step_id="init", data_schema=schema, errors=errors)

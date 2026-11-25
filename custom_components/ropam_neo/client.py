@@ -30,6 +30,7 @@ from .protocol import (
     T_LOGIN,
     T_LOGOUT,
     T_MESSAGE,
+    T_FIRE,
     T_NACK,
     T_PANIC,
     T_PING,
@@ -253,6 +254,10 @@ class RopamNeoClient:
     async def panic(self) -> None:
         """Alarm napadowy (jak przycisk PANIC w aplikacji RopamNeo)."""
         await self._send(T_PANIC, b"", log_text="ALARM NAPADOWY")
+
+    async def fire(self) -> None:
+        """Alarm pożarowy (jak widget Pożar w aplikacji RopamNeo)."""
+        await self._send(T_FIRE, b"", log_text="ALARM POŻAROWY")
 
     async def request_config(self) -> None:
         await self._send(T_GETCONFIG, b"")
@@ -563,7 +568,7 @@ class RopamNeoClient:
         if ftype in (T_PING, T_ACK):
             self._add_log("RX", f"{frame.name}({ftype})")
             return
-        if ftype in (T_NACK, T_ARM, T_DISARM, T_SETOUTS, T_PANIC):
+        if ftype in (T_NACK, T_ARM, T_DISARM, T_SETOUTS, T_PANIC, T_FIRE):
             self._add_log(
                 "RX", f"{frame.name}({ftype}) {frame.data.hex(' ') if frame.data else ''}"
             )

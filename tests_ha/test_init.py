@@ -90,7 +90,17 @@ async def test_setup_with_simulator(hass, no_frontend, socket_enabled):
             break
     assert hass.states.get(zone.entity_id).state == "armed_away"
 
-    panic = next(e for e in states if e.startswith("button."))
+    buttons = sorted(e for e in states if e.startswith("button."))
+    assert len(buttons) == 2, buttons
+    panic = next(e for e in buttons if "napad" in e)
+    fire = next(e for e in buttons if "poz" in e)
+    await hass.services.async_call("button", "press", {"entity_id": fire}, blocking=True)
+    for _ in range(20):
+        await asyncio.sleep(0.05)
+        await hass.async_block_till_done()
+        if any(t == 43 for t, _ in central.received):
+            break
+    assert any(t == 43 for t, _ in central.received)
     await hass.services.async_call("button", "press", {"entity_id": panic}, blocking=True)
     for _ in range(20):
         await asyncio.sleep(0.05)
@@ -114,8 +124,9 @@ async def test_options_toggle_panic_without_reconnect(hass, no_frontend):
         "custom_components.ropam_neo.config_flow.RopamNeoClient.async_test"
     ) as test:
         result = await hass.config_entries.options.async_configure(
-            result["flow_id"], {**DATA, "panic_button": False}
+            result["flow_id"], {**DATA, "panic_button": False, "fire_button": True}
         )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options["panic_button"] is False
+    assert entry.options["fire_button"] is True
     test.assert_not_called()

@@ -74,6 +74,10 @@ async def test_full_session(socket_enabled):
         await asyncio.sleep(0.3)
         assert any(t == P.T_PANIC for t, _ in c.received)
         assert cl.state.status.zones[0].alarm
+        await cl.fire()
+        await asyncio.sleep(0.3)
+        assert any(t == P.T_FIRE for t, _ in c.received)
+        assert cl.state.status.zones[1].alarm
         d = cl.diagnostics()
         txt = str(d)
         assert S.TCP_KEY not in txt and S.DEVICE_ID not in txt and "+48000000000" not in txt

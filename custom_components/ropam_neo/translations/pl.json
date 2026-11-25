@@ -49,7 +49,8 @@
           "device_id": "ID centrali",
           "tcp_key": "Klucz TCP/IP",
           "user_code": "Kod użytkownika",
-          "panic_button": "Pokaż przycisk alarmu napadowego"
+          "panic_button": "Pokaż przycisk alarmu napadowego",
+          "fire_button": "Pokaż przycisk alarmu pożarowego"
         },
         "data_description": {
           "host": "Lokalny adres IP centrali (najlepiej zarezerwowany w routerze).",
@@ -57,7 +58,8 @@
           "device_id": "16-znakowe ID z programu NeoGSM-IP Manager (lub z kodu QR aplikacji RopamNeo).",
           "tcp_key": "Klucz szyfrowania aplikacji z zakładki komunikacji w Managerze.",
           "user_code": "Kod użytkownika z prawem do aplikacji. Używany do logowania oraz uzbrajania i rozbrajania.",
-          "panic_button": "Przycisk wywołuje alarm napadowy w centrali (syrena, powiadomienia)."
+          "panic_button": "Przycisk wywołuje alarm napadowy w centrali (syrena, powiadomienia).",
+          "fire_button": "Przycisk wywołuje alarm pożarowy w centrali."
         }
       }
     },

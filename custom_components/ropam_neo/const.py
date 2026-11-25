@@ -7,6 +7,7 @@ CONF_DEVICE_ID = "device_id"
 CONF_TCP_KEY = "tcp_key"
 CONF_USER_CODE = "user_code"
 CONF_PANIC_BUTTON = "panic_button"
+CONF_FIRE_BUTTON = "fire_button"
 
 DEFAULT_PORT = 9999
 SETUP_TIMEOUT = 25
@@ -20,4 +21,4 @@ EVENT_MESSAGE = "ropam_neo_message"
 
 PLATFORMS = ["alarm_control_panel", "binary_sensor", "button", "sensor", "switch"]
 
-VERSION = "1.2"
+VERSION = "1.3"

@@ -94,6 +94,9 @@ async def handle(reader, writer, c: Central, mode="ok"):
         elif f.ftype == P.T_PANIC:
             c.zones[0] |= 0x10
             send(P.T_PANIC, b"", vec); send(P.T_STATUS, c.status_text().encode(), vec)
+        elif f.ftype == P.T_FIRE:
+            c.zones[1] |= 0x10
+            send(P.T_FIRE, b"", vec); send(P.T_STATUS, c.status_text().encode(), vec)
         elif f.ftype == P.T_PING:
             send(P.T_PING, b"", vec)
         elif f.ftype == P.T_LOGOUT:
