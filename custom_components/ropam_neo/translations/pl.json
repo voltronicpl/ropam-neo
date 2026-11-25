@@ -50,7 +50,10 @@
           "tcp_key": "Klucz TCP/IP",
           "user_code": "Kod użytkownika",
           "panic_button": "Pokaż przycisk alarmu napadowego",
-          "fire_button": "Pokaż przycisk alarmu pożarowego"
+          "fire_button": "Pokaż przycisk alarmu pożarowego",
+          "zone1_sensors": "Strefa 1: czujniki z Home Assistant",
+          "zone1_delay": "Strefa 1: opóźnienie",
+          "zone1_action": "Strefa 1: reakcja"
         },
         "data_description": {
           "host": "Lokalny adres IP centrali (najlepiej zarezerwowany w routerze).",
@@ -59,7 +62,10 @@
           "tcp_key": "Klucz szyfrowania aplikacji z zakładki komunikacji w Managerze.",
           "user_code": "Kod użytkownika z prawem do aplikacji. Używany do logowania oraz uzbrajania i rozbrajania.",
           "panic_button": "Przycisk wywołuje alarm napadowy w centrali (syrena, powiadomienia).",
-          "fire_button": "Przycisk wywołuje alarm pożarowy w centrali."
+          "fire_button": "Przycisk wywołuje alarm pożarowy w centrali.",
+          "zone1_sensors": "Otwarcie któregokolwiek przy pełnym uzbrojeniu strefy 1 (nie nocnym) wywołuje alarm.",
+          "zone1_delay": "Sekundy do wywołania alarmu - czas na rozbrojenie po wejściu.",
+          "zone1_action": "Jaki alarm wywołać w centrali."
         }
       }
     },
@@ -76,6 +82,14 @@
       "missing_tcp_key": "Podaj klucz TCP/IP.",
       "missing_user_code": "Podaj kod użytkownika.",
       "unknown": "Nieoczekiwany błąd - szczegóły w zakładce Ropam Neo."
+    }
+  },
+  "selector": {
+    "zone_action": {
+      "options": {
+        "panic": "Alarm napadowy",
+        "fire": "Alarm pożarowy"
+      }
     }
   }
 }

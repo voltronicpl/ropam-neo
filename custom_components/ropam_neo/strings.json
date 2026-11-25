@@ -50,7 +50,10 @@
           "tcp_key": "TCP/IP key",
           "user_code": "User code",
           "panic_button": "Show panic alarm button",
-          "fire_button": "Show fire alarm button"
+          "fire_button": "Show fire alarm button",
+          "zone1_sensors": "Zone 1: Home Assistant sensors",
+          "zone1_delay": "Zone 1: delay",
+          "zone1_action": "Zone 1: reaction"
         },
         "data_description": {
           "host": "Local IP of the panel (reserve it in your router).",
@@ -59,7 +62,10 @@
           "tcp_key": "Application encryption key from the Manager communication tab.",
           "user_code": "User code with app permission. Used to log in and to arm/disarm.",
           "panic_button": "Adds a button that triggers the panel's panic alarm (siren, notifications).",
-          "fire_button": "Adds a button that triggers the panel's fire alarm."
+          "fire_button": "Adds a button that triggers the panel's fire alarm.",
+          "zone1_sensors": "Opening any of them while zone 1 is fully armed (not night) triggers the alarm.",
+          "zone1_delay": "Seconds before the alarm is triggered - time to disarm after entering.",
+          "zone1_action": "Which alarm to trigger in the panel."
         }
       }
     },
@@ -76,6 +82,14 @@
       "missing_tcp_key": "Enter the TCP/IP key.",
       "missing_user_code": "Enter the user code.",
       "unknown": "Unexpected error - see the Ropam Neo tab."
+    }
+  },
+  "selector": {
+    "zone_action": {
+      "options": {
+        "panic": "Panic alarm",
+        "fire": "Fire alarm"
+      }
     }
   }
 }

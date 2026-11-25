@@ -14,12 +14,16 @@ from .const import (
     CONF_DEVICE_ID,
     CONF_TCP_KEY,
     CONF_USER_CODE,
+    CONF_Z1_ACTION,
+    CONF_Z1_DELAY,
+    CONF_Z1_SENSORS,
     DEFAULT_PORT,
     DOMAIN,
     EVENT_MESSAGE,
     PLATFORMS,
     SETUP_TIMEOUT,
 )
+from .ha_sensors import ACTION_PANIC, ZoneSensorWatcher
 from .panel import async_register_panel, async_unregister_panel, clients
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,6 +63,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: RopamConfigEntry) -> boo
     entry.runtime_data = client
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_reload))
+
+    sensors = entry.options.get(CONF_Z1_SENSORS) or []
+    if sensors:
+        watcher = ZoneSensorWatcher(
+            hass,
+            client,
+            sensors,
+            int(entry.options.get(CONF_Z1_DELAY, 0)),
+            entry.options.get(CONF_Z1_ACTION, ACTION_PANIC),
+        )
+        watcher.start()
+        entry.async_on_unload(watcher.stop)
     return True
 
 

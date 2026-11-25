@@ -86,6 +86,11 @@ class RopamZone(RopamEntity, AlarmControlPanelEntity):
             "licznik": z.timer,
             "uprawnienia_uzytkownika": allowed,
             "surowy_bajt": z.raw,
+            **(
+                {"czujniki_ha_otwarte": list(self._client.ha_open_sensors)}
+                if self._idx == 0
+                else {}
+            ),
         }
 
     async def async_alarm_arm_away(self, code: str | None = None) -> None:

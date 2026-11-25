@@ -12,9 +12,14 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
     BooleanSelector,
+    EntitySelector,
+    EntitySelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
@@ -27,6 +32,9 @@ from .const import (
     CONF_PANIC_BUTTON,
     CONF_TCP_KEY,
     CONF_USER_CODE,
+    CONF_Z1_ACTION,
+    CONF_Z1_DELAY,
+    CONF_Z1_SENSORS,
     DEFAULT_PORT,
     DOMAIN,
 )
@@ -129,10 +137,17 @@ class RopamNeoOptionsFlow(OptionsFlow):
         defaults = dict(self.config_entry.data)
         panic = self.config_entry.options.get(CONF_PANIC_BUTTON, True)
         fire = self.config_entry.options.get(CONF_FIRE_BUTTON, True)
+        opts = self.config_entry.options
+        z1_sensors = list(opts.get(CONF_Z1_SENSORS) or [])
+        z1_delay = int(opts.get(CONF_Z1_DELAY, 0))
+        z1_action = opts.get(CONF_Z1_ACTION, "panic")
         if user_input is not None:
             data = _clean(user_input)
             panic = bool(user_input.get(CONF_PANIC_BUTTON, True))
             fire = bool(user_input.get(CONF_FIRE_BUTTON, True))
+            z1_sensors = list(user_input.get(CONF_Z1_SENSORS) or [])
+            z1_delay = int(user_input.get(CONF_Z1_DELAY, 0))
+            z1_action = user_input.get(CONF_Z1_ACTION, "panic")
             defaults = data
             changed = any(
                 data[k] != self.config_entry.data.get(k)
@@ -148,13 +163,38 @@ class RopamNeoOptionsFlow(OptionsFlow):
                         title=f"Ropam Neo ({data[CONF_HOST]})",
                     )
                 return self.async_create_entry(
-                    data={CONF_PANIC_BUTTON: panic, CONF_FIRE_BUTTON: fire}
+                    data={
+                        CONF_PANIC_BUTTON: panic,
+                        CONF_FIRE_BUTTON: fire,
+                        CONF_Z1_SENSORS: z1_sensors,
+                        CONF_Z1_DELAY: z1_delay,
+                        CONF_Z1_ACTION: z1_action,
+                    }
                 )
             errors["base"] = error
         schema = _schema(defaults).extend(
             {
                 vol.Required(CONF_PANIC_BUTTON, default=panic): BooleanSelector(),
                 vol.Required(CONF_FIRE_BUTTON, default=fire): BooleanSelector(),
+                vol.Optional(CONF_Z1_SENSORS, default=z1_sensors): EntitySelector(
+                    EntitySelectorConfig(domain="binary_sensor", multiple=True)
+                ),
+                vol.Required(CONF_Z1_DELAY, default=z1_delay): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=600,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                        unit_of_measurement="s",
+                    )
+                ),
+                vol.Required(CONF_Z1_ACTION, default=z1_action): SelectSelector(
+                    SelectSelectorConfig(
+                        options=["panic", "fire"],
+                        mode=SelectSelectorMode.DROPDOWN,
+                        translation_key="zone_action",
+                    )
+                ),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema, errors=errors)

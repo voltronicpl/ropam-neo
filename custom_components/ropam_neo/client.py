@@ -165,6 +165,7 @@ class RopamNeoClient:
         self._listeners: list[Callable[[], None]] = []
         self._message_listeners: list[Callable[[str], None]] = []
         self._ready = asyncio.Event()
+        self.ha_open_sensors: list[str] = []
 
     # ------------------------------------------------------------ public API
 
@@ -276,6 +277,22 @@ class RopamNeoClient:
     def _err(self, text: str) -> None:
         self._add_log("ERR", text)
         _LOGGER.debug(text)
+
+    def log_info(self, text: str) -> None:
+        self._info(text)
+
+    def log_error(self, text: str) -> None:
+        self._err(text)
+
+    def notify(self) -> None:
+        self._notify()
+
+    def local_message(self, text: str) -> None:
+        """Komunikat wygenerowany przez integrację (log + sensor komunikatu)."""
+        self._add_log("INFO", text)
+        self.state.last_message = text
+        self.state.last_message_time = time.time()
+        self._notify()
 
     def _notify(self) -> None:
         for cb in list(self._listeners):
@@ -604,6 +621,7 @@ class RopamNeoClient:
             "last_frame": st.last_frame,
             "last_error": st.last_error,
             "last_message": st.last_message,
+            "ha_open_sensors": list(self.ha_open_sensors),
             "login": st.login.as_dict() if st.login else None,
             "status_raw": st.status.raw if st.status else None,
             "status": st.status.as_dict() if st.status else None,

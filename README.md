@@ -43,6 +43,24 @@ Dane są zapisywane tylko w konfiguracji HA. W logach i diagnostyce są maskowan
 
 **Zalecenie:** załóż w centrali osobnego użytkownika dla Home Assistant, z dostępem tylko do potrzebnych stref, zamiast używać kodu głównego.
 
+## Czujniki z Home Assistant w strefie 1
+
+W opcjach integracji (**Konfiguruj**) możesz wpiąć w strefę 1 dowolne encje `binary_sensor` z HA, np. kontaktrony Zigbee drzwi i okien:
+
+- **Strefa 1: czujniki z Home Assistant**: wybierasz z listy, można kilka.
+- **Strefa 1: opóźnienie**: sekundy do wywołania alarmu, czyli czas na rozbrojenie po wejściu. Dla okien `0`, dla drzwi wejściowych np. `30`.
+- **Strefa 1: reakcja**: alarm napadowy (domyślnie) albo pożarowy w centrali.
+
+Działanie:
+- Działa tylko przy **pełnym** uzbrojeniu strefy 1. Przy nocnym i po rozbrojeniu czujniki z HA są ignorowane.
+- Otwarcie czujnika (zmiana z `off` na `on`) uruchamia odliczanie. Rozbrojenie w tym czasie anuluje alarm.
+- Na jedno uzbrojenie wywoływany jest jeden alarm, kolejne otwarcia go nie dublują.
+- Uzbrojenie przy otwartym czujniku daje tylko ostrzeżenie w sensorze *Ostatni komunikat* i w logu, bez alarmu.
+- Przejścia z `unavailable`/`unknown` (restart HA, utrata zasięgu Zigbee) są ignorowane.
+- Encja strefy 1 ma atrybut `czujniki_ha_otwarte`.
+
+Alarm idzie przez centralę, więc w Managerze muszą być ustawione reakcja (syrena) i powiadomienia dla napadu lub pożaru.
+
 ## Ustawienia w centrali (NeoGSM-IP Manager)
 
 - Centrala w sieci WiFi/LAN, z dostępem do aplikacji mobilnej.
