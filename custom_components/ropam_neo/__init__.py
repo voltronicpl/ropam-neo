@@ -11,6 +11,8 @@ from homeassistant.exceptions import ConfigEntryNotReady
 
 from .client import RopamNeoClient
 from .const import (
+    CONF_AUTO_DELAY,
+    CONF_AUTO_PERSONS,
     CONF_DEVICE_ID,
     CONF_TCP_KEY,
     CONF_USER_CODE,
@@ -23,6 +25,7 @@ from .const import (
     PLATFORMS,
     SETUP_TIMEOUT,
 )
+from .presence import AutoArmWatcher
 from .ha_sensors import ACTION_PANIC, ZoneSensorWatcher
 from .panel import async_register_panel, async_unregister_panel, clients
 
@@ -75,6 +78,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: RopamConfigEntry) -> boo
         )
         watcher.start()
         entry.async_on_unload(watcher.stop)
+
+    persons = entry.options.get(CONF_AUTO_PERSONS) or []
+    if persons:
+        auto = AutoArmWatcher(
+            hass, client, persons, float(entry.options.get(CONF_AUTO_DELAY, 5)) * 60
+        )
+        auto.start()
+        entry.async_on_unload(auto.stop)
     return True
 
 

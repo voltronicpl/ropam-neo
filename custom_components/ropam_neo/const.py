@@ -11,6 +11,8 @@ CONF_FIRE_BUTTON = "fire_button"
 CONF_Z1_SENSORS = "zone1_sensors"
 CONF_Z1_DELAY = "zone1_delay"
 CONF_Z1_ACTION = "zone1_action"
+CONF_AUTO_PERSONS = "auto_arm_persons"
+CONF_AUTO_DELAY = "auto_arm_delay"
 
 DEFAULT_PORT = 9999
 SETUP_TIMEOUT = 25
@@ -24,4 +26,4 @@ EVENT_MESSAGE = "ropam_neo_message"
 
 PLATFORMS = ["alarm_control_panel", "binary_sensor", "button", "sensor", "switch"]
 
-VERSION = "1.4"
+VERSION = "1.5"

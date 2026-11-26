@@ -53,7 +53,9 @@
           "fire_button": "Pokaż przycisk alarmu pożarowego",
           "zone1_sensors": "Strefa 1: czujniki z Home Assistant",
           "zone1_delay": "Strefa 1: opóźnienie",
-          "zone1_action": "Strefa 1: reakcja"
+          "zone1_action": "Strefa 1: reakcja",
+          "auto_arm_persons": "Auto-uzbrajanie strefy 1: osoby",
+          "auto_arm_delay": "Auto-uzbrajanie: opóźnienie"
         },
         "data_description": {
           "host": "Lokalny adres IP centrali (najlepiej zarezerwowany w routerze).",
@@ -65,7 +67,9 @@
           "fire_button": "Przycisk wywołuje alarm pożarowy w centrali.",
           "zone1_sensors": "Otwarcie któregokolwiek przy pełnym uzbrojeniu strefy 1 (nie nocnym) wywołuje alarm.",
           "zone1_delay": "Sekundy do wywołania alarmu - czas na rozbrojenie po wejściu.",
-          "zone1_action": "Jaki alarm wywołać w centrali."
+          "zone1_action": "Jaki alarm wywołać w centrali.",
+          "auto_arm_persons": "Gdy wszystkie wyjdą z domu, strefa 1 zostanie uzbrojona (pełne). Puste = wyłączone.",
+          "auto_arm_delay": "Minuty od wyjścia ostatniej osoby do uzbrojenia."
         }
       }
     },

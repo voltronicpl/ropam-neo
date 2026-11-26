@@ -61,6 +61,19 @@ Działanie:
 
 Alarm idzie przez centralę, więc w Managerze muszą być ustawione reakcja (syrena) i powiadomienia dla napadu lub pożaru.
 
+## Automatyczne uzbrajanie, gdy nikogo nie ma w domu
+
+W opcjach integracji (**Konfiguruj**):
+- **Auto-uzbrajanie strefy 1: osoby**: encje `person.*` z HA. Lokalizację biorą z aplikacji HA na telefonach. Puste pole wyłącza funkcję.
+- **Auto-uzbrajanie: opóźnienie**: minuty od wyjścia ostatniej osoby do uzbrojenia, domyślnie 5.
+
+Działanie:
+- Gdy **wszystkie** wybrane osoby są poza strefą „dom” przez czas opóźnienia, strefa 1 zostaje uzbrojona (pełne).
+- Uzbraja tylko po przejściu „ktoś w domu → nikogo”. Restart HA albo zdalne rozbrojenie, gdy wszyscy są poza domem, nie powodują ponownego uzbrojenia, dopóki ktoś nie wróci.
+- Status osoby `unknown`/`unavailable` blokuje uzbrajanie. Nie zgadujemy.
+- Powrót kogokolwiek w czasie opóźnienia anuluje uzbrajanie.
+- Automatycznego rozbrajania po powrocie **nie ma** celowo, bo lokalizacja telefonu to za słabe zabezpieczenie.
+
 ## Ustawienia w centrali (NeoGSM-IP Manager)
 
 - Centrala w sieci WiFi/LAN, z dostępem do aplikacji mobilnej.

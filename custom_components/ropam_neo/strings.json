@@ -53,7 +53,9 @@
           "fire_button": "Show fire alarm button",
           "zone1_sensors": "Zone 1: Home Assistant sensors",
           "zone1_delay": "Zone 1: delay",
-          "zone1_action": "Zone 1: reaction"
+          "zone1_action": "Zone 1: reaction",
+          "auto_arm_persons": "Auto-arm zone 1: persons",
+          "auto_arm_delay": "Auto-arm: delay"
         },
         "data_description": {
           "host": "Local IP of the panel (reserve it in your router).",
@@ -65,7 +67,9 @@
           "fire_button": "Adds a button that triggers the panel's fire alarm.",
           "zone1_sensors": "Opening any of them while zone 1 is fully armed (not night) triggers the alarm.",
           "zone1_delay": "Seconds before the alarm is triggered - time to disarm after entering.",
-          "zone1_action": "Which alarm to trigger in the panel."
+          "zone1_action": "Which alarm to trigger in the panel.",
+          "auto_arm_persons": "When all of them leave home, zone 1 is fully armed. Empty = off.",
+          "auto_arm_delay": "Minutes from the last person leaving until arming."
         }
       }
     },

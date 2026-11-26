@@ -27,6 +27,8 @@ from homeassistant.helpers.selector import (
 
 from .client import LoginInfo, NeoError, RopamNeoClient
 from .const import (
+    CONF_AUTO_DELAY,
+    CONF_AUTO_PERSONS,
     CONF_DEVICE_ID,
     CONF_FIRE_BUTTON,
     CONF_PANIC_BUTTON,
@@ -141,6 +143,8 @@ class RopamNeoOptionsFlow(OptionsFlow):
         z1_sensors = list(opts.get(CONF_Z1_SENSORS) or [])
         z1_delay = int(opts.get(CONF_Z1_DELAY, 0))
         z1_action = opts.get(CONF_Z1_ACTION, "panic")
+        auto_persons = list(opts.get(CONF_AUTO_PERSONS) or [])
+        auto_delay = int(opts.get(CONF_AUTO_DELAY, 5))
         if user_input is not None:
             data = _clean(user_input)
             panic = bool(user_input.get(CONF_PANIC_BUTTON, True))
@@ -148,6 +152,8 @@ class RopamNeoOptionsFlow(OptionsFlow):
             z1_sensors = list(user_input.get(CONF_Z1_SENSORS) or [])
             z1_delay = int(user_input.get(CONF_Z1_DELAY, 0))
             z1_action = user_input.get(CONF_Z1_ACTION, "panic")
+            auto_persons = list(user_input.get(CONF_AUTO_PERSONS) or [])
+            auto_delay = int(user_input.get(CONF_AUTO_DELAY, 5))
             defaults = data
             changed = any(
                 data[k] != self.config_entry.data.get(k)
@@ -169,6 +175,8 @@ class RopamNeoOptionsFlow(OptionsFlow):
                         CONF_Z1_SENSORS: z1_sensors,
                         CONF_Z1_DELAY: z1_delay,
                         CONF_Z1_ACTION: z1_action,
+                        CONF_AUTO_PERSONS: auto_persons,
+                        CONF_AUTO_DELAY: auto_delay,
                     }
                 )
             errors["base"] = error
@@ -193,6 +201,18 @@ class RopamNeoOptionsFlow(OptionsFlow):
                         options=["panic", "fire"],
                         mode=SelectSelectorMode.DROPDOWN,
                         translation_key="zone_action",
+                    )
+                ),
+                vol.Optional(CONF_AUTO_PERSONS, default=auto_persons): EntitySelector(
+                    EntitySelectorConfig(domain="person", multiple=True)
+                ),
+                vol.Required(CONF_AUTO_DELAY, default=auto_delay): NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=120,
+                        step=1,
+                        mode=NumberSelectorMode.BOX,
+                        unit_of_measurement="min",
                     )
                 ),
             }
